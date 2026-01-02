@@ -43,7 +43,7 @@ const Navbar = () => {
     }
 
   return (
-    <div className="navbar  shadow-md px-4 bg-black text-white">
+    <div className="navbar fixed top-0 z-50 px-4 bg-black text-white shadow-[0_0px_60px_10px_rgba(255,255,255,0.5)]">
       {/* Left */}
       <div className="navbar-start">
         <div className="dropdown">
