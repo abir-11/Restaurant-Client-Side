@@ -6,7 +6,7 @@ const googleProvider=new GoogleAuthProvider();
 const AuthProvider = ({children}) => {
   const [user,setUser]=useState(null);
   const [loading,setLoading]=useState(true);
-    const resgisterUser=(email,password)=>{
+    const registerUser=(email,password)=>{
       setLoading(true);
       return createUserWithEmailAndPassword(auth,email,password);
     }
@@ -22,7 +22,7 @@ const AuthProvider = ({children}) => {
       setLoading(true);
       return signOut(auth);
     }
-    const updateUserProfile=(profile)=>{
+    const updateUserProfie=(profile)=>{
       return updateProfile(auth.currentUser,profile);
 
     }
@@ -38,11 +38,11 @@ const AuthProvider = ({children}) => {
     const authInfo={
       user,
       loading,
-      resgisterUser,
+      registerUser,
       signInUser,
       signInGoogle,
       logOut,
-      updateUserProfile,
+      updateUserProfie,
       setUser
     }
     return (

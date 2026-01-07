@@ -67,8 +67,8 @@ const Login = () => {
 
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4" style={{ backgroundImage: `url(${bgCover})`,
-          backgroundRepeat: 'no-repeat',width:'100%',height:'100vh',backgroundSize:'cover' }}>
+    <div className="min-h-screen  flex items-center justify-center bg-gray-100 p-4" style={{ backgroundImage: `url(${bgCover})`,
+          backgroundRepeat: 'no-repeat',width:'100%',height:'110vh',backgroundSize:'cover' }}>
       <div className="bg-white/10 backdrop-blur-2xl shadow-3xl rounded-3xl overflow-hidden flex flex-col sm:flex-row w-full max-w-4xl">
 
         {/* LEFT SIDE FORM */}
@@ -164,7 +164,7 @@ const Login = () => {
           backgroundRepeat: 'no-repeat',backgroundSize:'cover' }}>
           <div className="text-center">
             <h2 className="text-3xl font-extrabold mb-2">New Here?</h2>
-            <p className="mb-4 font-bold">Create an account</p>
+            <p className="mb-4 font-bold bg-primary/80 text-white p-1 rounded-2xl">Create an account</p>
             <Link to="/signup">
               <button className="btn bg-pink-500 text-white  shadow-2xl border-none hover:bg-pink-600 hover:text-white">
                 Register
