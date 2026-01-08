@@ -75,7 +75,7 @@ const Navbar = () => {
 
         {user ? (
           <div className="gap-2 flex items-center">
-            <NavLink to="/booking" className="btn btn-sm bg-pink-500 text-white">
+            <NavLink to="/booking" className="btn btn-sm  bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-600 hover:to-rose-700 border-none text-white">
               Book Now
             </NavLink>
 
@@ -112,10 +112,10 @@ const Navbar = () => {
           </div>
         ) : (
           <div className="flex gap-3">
-            <NavLink to="/signup" className="btn border-none btn-sm bg-pink-500 text-white hover:bg-pink-600">
+            <NavLink to="/signup" className="btn border-none btn-sm  bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-600 hover:to-rose-700  text-white ">
               SignUp
             </NavLink>
-            <NavLink to="/login" className="btn btn-outline btn-sm hover:bg-pink-500 hover:border-none hover:text-white">
+            <NavLink to="/login" className="btn btn-outline btn-sm bg-gradient-to-r hover:from-pink-600 hover:to-rose-700 hover:border-none hover:text-white">
               Login
             </NavLink>
           </div>

@@ -9,10 +9,11 @@ import 'swiper/css/navigation';
 import hero1 from '../../assets/photo-15.jpg';
 import hero2 from '../../assets/banner1.png';
 import hero3 from '../../assets/b1.jpg';
+import CardShow from './CardShow';
 
 const Home = () => {
     return (
-        <div>
+        <div className="bg-gray-50 min-h-screen">
             <div className="w-full">
                 {/* Swiper Custom Styles */}
                 <style>
@@ -132,6 +133,15 @@ const Home = () => {
                         </div>
                     </SwiperSlide>
                 </Swiper>
+            </div>
+            <div>
+                 <div>
+
+                 </div>
+                 {/* Card Show Section */}
+                <div >
+                   <CardShow></CardShow> 
+                </div>
             </div>
         </div>
     );

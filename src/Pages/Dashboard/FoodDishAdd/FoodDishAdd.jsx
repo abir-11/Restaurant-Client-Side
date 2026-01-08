@@ -35,7 +35,7 @@ const FoodDishAdd = () => {
                 category: data.category,
                 rating: parseFloat(data.rating || 0),
                 spiceLevel: data.spiceLevel,
-                vegType: data.VegType,
+                vegType: data.vegType,
                 calories: parseInt(data.calories),
                 availability: data.availability === 'true',
                 featured: data.featured === 'true',
@@ -195,7 +195,7 @@ const FoodDishAdd = () => {
                             {/* Veg Type */}
                             <div className="form-control">
                                 <label className="label font-semibold text-gray-700 mb-1">
-                                    Veg / Non-Veg / Mixed
+                                    Veg / Non-Veg / Mixed / None
                                 </label>
 
                                 <div className="flex gap-6 mt-2">
@@ -232,15 +232,19 @@ const FoodDishAdd = () => {
                                         />
                                         <span>Mixed</span>
                                     </label>
-
+                                    {/* none */}
+                                    <label className="flex items-center space-x-2 cursor-pointer">
+                                        <input
+                                            type="radio"
+                                            value="None"
+                                            className="radio text-pink-500 focus:ring-pink-500"
+                                            {...register("vegType", { required: true })}
+                                        />
+                                        <span>None</span>
+                                    </label>
                                 </div>
+                               { errors.vegType && <p className='text-red-500 text-sm mt-1'>* Veg Type is required</p> }
 
-                                {/* Validation Error */}
-                                {errors?.vegType && (
-                                    <p className="text-red-500 mt-2">
-                                        Please select one option
-                                    </p>
-                                )}
                             </div>
 
 
