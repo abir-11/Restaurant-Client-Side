@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { use } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Navigation, Autoplay } from 'swiper/modules';
 
@@ -9,9 +9,15 @@ import 'swiper/css/navigation';
 import hero1 from '../../assets/photo-15.jpg';
 import hero2 from '../../assets/banner1.png';
 import hero3 from '../../assets/b1.jpg';
-import CardShow from './CardShow';
+import FoodCardShow from './FoodCardShow';
+import BookerItLanding from '../BookerItLanding/BookerItLanding';
+import useAuth from '../../Hooks/useAuth';
+import { useNavigate } from 'react-router';
+
 
 const Home = () => {
+    const { user } = useAuth();
+    const navigate=useNavigate();
     return (
         <div className="bg-gray-50 min-h-screen">
             <div className="w-full">
@@ -135,12 +141,34 @@ const Home = () => {
                 </Swiper>
             </div>
             <div>
-                 <div>
-
-                 </div>
-                 {/* Card Show Section */}
+                {/* Card Show Section */}
                 <div >
-                   <CardShow></CardShow> 
+                    <FoodCardShow></FoodCardShow>
+                </div>
+
+                {/* detailas */}
+                <div>
+                    <BookerItLanding></BookerItLanding>
+                </div>
+                <div>
+                    <section className="py-20 max-w-11/12 mx-auto text-center bg-[url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80')] bg-cover bg-fixed bg-center relative rounded-xl mb-10 overflow-hidden">
+                        
+                        <div className="absolute inset-0 bg-black/60"></div>
+                        <div className="relative z-10 text-white max-w-3xl mx-auto px-4">
+                            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+                                Ready to <span className="text-pink-500">BOOK</span> Your Seat?
+                            </h2>
+                            <p className="text-xl mb-8 text-gray-200">
+                                Stop losing revenue to inefficient seating. Join thousands of restaurants maximizing capacity with BookerIt today.
+                            </p>
+                            <button
+                                onClick={() => navigate(user ? "/book-table" : "/login")}
+                                className="btn btn-lg bg-pink-500 hover:bg-pink-600 border-none text-white shadow-lg hover:scale-105 transition-transform rounded-full px-8"
+                            >
+                                Get Started Book Now
+                            </button>
+                        </div>
+                    </section>
                 </div>
             </div>
         </div>

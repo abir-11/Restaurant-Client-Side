@@ -20,13 +20,13 @@ const FoodDishAdd = () => {
             if (data.image && data.image.length > 0) {
                 const formData = new FormData();
                 formData.append('image', data.image[0]);
-                const image_API_URL = `https://api.imgbb.com/1/upload?expiration=600&key=${import.meta.env.VITE_image_host_key}`;
+                const image_API_URL = `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_image_host_key}`;
 
                 const res = await axios.post(image_API_URL, formData);
                 uploadedImgUrl = res.data?.data?.url;
             }
 
-            // ২. ফাইনাল ডাটা অবজেক্ট তৈরি
+            
             const newDish = {
                 title: data.name,
                 image: uploadedImgUrl,

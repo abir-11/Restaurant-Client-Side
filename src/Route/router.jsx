@@ -6,6 +6,11 @@ import Login from "../Pages/Auth/Login";
 import SignUp from "../Pages/Auth/SignUp";
 import DashboardLayout from "../Layout/DashboardLayout";
 import FoodDishAdd from "../Pages/Dashboard/FoodDishAdd/FoodDishAdd";
+import BookTable from "../Pages/BookTable/BookTable";
+import ContactUs from "../Pages/ContactUs/ContactUs";
+import AboutUs from "../Pages/AboutUs/AboutUs";
+import OurMenu from "../Pages/OurMenu/OurMenu";
+import Profile from "../Pages/Profile/Profile";
 
 const router=createBrowserRouter([
     {
@@ -15,6 +20,26 @@ const router=createBrowserRouter([
             {
                 index:true,
                 Component:Home
+            },
+            {
+                path:'/book-table',
+                Component:BookTable
+            },
+            {
+                path:'/contact',
+                Component:ContactUs
+            },
+            {
+                path:'/about',
+                Component:AboutUs
+            },
+            {
+                path:'/our-menu',
+                Component:OurMenu
+            },
+            {
+                path:'/profile',
+                Component:Profile
             }
         ]
     },

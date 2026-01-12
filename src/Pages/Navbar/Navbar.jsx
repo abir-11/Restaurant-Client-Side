@@ -1,10 +1,19 @@
 import { Link, NavLink } from "react-router";
 import useAuth from "../../Hooks/useAuth";
 import BookerAI from "../../assets/ChatGPT Image Dec 2, 2025, 12_28_43 AM 1.png";
-import SignUp from './../Auth/SignUp';
+import useAxiosSecure from "../../Hooks/useAxiosSecure";
+import { useQuery } from "@tanstack/react-query";
 const Navbar = () => {
   const { user, logOut, loading } = useAuth();
-
+  const axiosSecure = useAxiosSecure();
+  const { data: users = {} } = useQuery({
+    queryKey: ['users', user?.email],
+    enabled: !!user?.email,
+    queryFn: async () => {
+      const res = await axiosSecure.get(`/users/${user?.email}`);
+      return res.data;
+    }
+  });
   const handleLogout = () => {
     logOut().catch(console.error);
   };
@@ -16,19 +25,19 @@ const Navbar = () => {
           ? "bg-pink-500 rounded-full text-white font-semibold"
           : "text-white hover:text-pink-400"
       }>Home</NavLink></li>
-      <li><NavLink to="/restaurants" className={({ isActive }) =>
+      <li><NavLink to="/our-menu" className={({ isActive }) =>
         isActive
-          ? "text-pink-500 font-semibold"
+          ? "bg-pink-500 rounded-full font-semibold"
           : "text-white hover:text-pink-400"
-      }>Restaurants</NavLink></li>
+      }>Our Menu</NavLink></li>
       <li><NavLink to="/contact" className={({ isActive }) =>
         isActive
-          ? "text-pink-500 font-semibold"
+          ? "bg-pink-500 rounded-full font-semibold"
           : "text-white hover:text-pink-400"
       }>Contact Us</NavLink></li>
       <li><NavLink to="/about" className={({ isActive }) =>
         isActive
-          ? "text-pink-500 font-semibold"
+          ? "bg-pink-500 rounded-full font-semibold"
           : "text-white hover:text-pink-400"
       }>About Us</NavLink></li>
     </>
@@ -43,7 +52,7 @@ const Navbar = () => {
   }
 
   return (
-    <div className="navbar fixed top-0 z-50 px-4 bg-black text-white shadow-[0_0px_60px_10px_rgba(255,255,255,0.5)]">
+    <div className="navbar fixed top-0 z-50 px-4 bg-gray-900 text-white shadow-[0_0px_60px_10px_rgba(255,255,255,0.5)]">
       {/* Left */}
       <div className="navbar-start">
         <div className="dropdown">
@@ -75,7 +84,7 @@ const Navbar = () => {
 
         {user ? (
           <div className="gap-2 flex items-center">
-            <NavLink to="/booking" className="btn btn-sm  bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-600 hover:to-rose-700 border-none text-white">
+            <NavLink to="/book-table" className="btn btn-sm  bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-600 hover:to-rose-700 border-none text-white">
               Book Now
             </NavLink>
 
@@ -94,30 +103,47 @@ const Navbar = () => {
               >
                 <li className=" rounded-full text-white font-semibold
          hover:text-white hover:bg-pink-500"><span>{user.displayName || "User"}</span></li>
-                <li>
-                  <NavLink
-                    to="/dashboard"
-                    className={({ isActive }) =>
-                      `rounded-full px-2 py-2 text-white font-semibold
+                {
+                  users?.role === 'admin' ? (
+                    <li>
+                      <NavLink
+                        to="/dashboard"
+                        className={({ isActive }) =>
+                          `rounded-full px-2 py-2 text-white font-semibold
       hover:bg-pink-500 ${isActive ? "bg-pink-600" : ""}`
-                    }
-                  >
-                    Dashboard
-                  </NavLink>
-                </li>
-                <li className=" rounded-full text-white font-semibold
+                        }
+                      >
+                        Dashboard
+                      </NavLink>
+                    </li>
+                  ) : (
+                    <li>
+                      <NavLink
+                        to="/profile"
+                        className={({ isActive }) =>
+                          `rounded-full px-2 py-2 my-1 text-white font-semibold
+      hover:bg-pink-500 ${isActive ? "bg-pink-600" : ""}`
+                        }
+                      >
+                        Profile
+                      </NavLink>
+                    </li>
+                  )
+                }
+                <li className="  rounded-full text-white font-semibold
          hover:text-white hover:bg-pink-500"><button onClick={handleLogout}>Logout</button></li>
               </ul>
             </div>
           </div>
         ) : (
           <div className="flex gap-3">
-            <NavLink to="/signup" className="btn border-none btn-sm  bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-600 hover:to-rose-700  text-white ">
-              SignUp
-            </NavLink>
             <NavLink to="/login" className="btn btn-outline btn-sm bg-gradient-to-r hover:from-pink-600 hover:to-rose-700 hover:border-none hover:text-white">
               Login
             </NavLink>
+            <NavLink to="/signup" className="btn border-none btn-sm  bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-600 hover:to-rose-700  text-white ">
+              SignUp
+            </NavLink>
+
           </div>
         )}
       </div>
