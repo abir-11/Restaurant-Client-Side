@@ -30,6 +30,12 @@ const Navbar = () => {
           ? "bg-pink-500 rounded-full font-semibold"
           : "text-white hover:text-pink-400"
       }>Our Menu</NavLink></li>
+      <li><NavLink to="/restaurant" className={({ isActive }) =>
+        isActive
+          ? "bg-pink-500 rounded-full font-semibold"
+          : "text-white hover:text-pink-400"
+      }>Restaurant</NavLink></li>
+
       <li><NavLink to="/contact" className={({ isActive }) =>
         isActive
           ? "bg-pink-500 rounded-full font-semibold"

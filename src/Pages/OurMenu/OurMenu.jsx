@@ -7,6 +7,7 @@ import { FaChartLine } from "react-icons/fa6";
 import { MdChevronRight } from "react-icons/md";
 import { Link } from 'react-router';
 
+
 const OurMenu = () => {
     const axiosSecure = useAxiosSecure();
 
@@ -143,8 +144,8 @@ const OurMenu = () => {
                                         </div>
 
                                         {/* Book Now Button */}
-                                        <button
-                                            type="submit"
+                                        <Link
+                                            to={item.availability ? `/book-food/${item._id}` : '#'}
                                             disabled={!item.availability}
                                             className={`flex-1 py-2.5 px-4 rounded-lg text-white font-bold text-sm uppercase tracking-wide shadow-lg transform transition hover:-translate-y-1 hover:shadow-xl
                                                         ${!item.availability
@@ -153,7 +154,7 @@ const OurMenu = () => {
                                                 }`}
                                         >
                                             {item.availability ? 'Book Now' : 'Sold Out'}
-                                        </button>
+                                        </Link>
                                     </div>
                                 </div>
                             </div>
