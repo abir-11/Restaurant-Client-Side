@@ -105,12 +105,15 @@ const Navbar = () => {
               </div>
               <ul
                 tabIndex={0}
-                className="menu menu-sm dropdown-content bg-black rounded-box mt-3 w-52 p-2 shadow"
+                className="menu menu-sm dropdown-content bg-gray-900 rounded-box mt-3 w-52 z-[1] p-2 shadow"
               >
-                <li className=" rounded-full text-white font-semibold
-         hover:text-white hover:bg-pink-500"><span>{user.displayName || "User"}</span></li>
+                <li className="menu-title rounded-full text-white font-semibold
+                     pr-2  flex flex-col">
+                  <span className=" truncate block">{users?.displayName || "User"}</span>
+                  <span className="text-xs font-light text-gray-100 capitalize">{users?.role || "user"}</span>
+                </li>
                 {
-                  users?.role === 'admin' ? (
+                  users?.role === 'admin' || users?.role==='restaurant-owner' ? (
                     <li>
                       <NavLink
                         to="/dashboard"

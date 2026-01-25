@@ -11,6 +11,7 @@ import ContactUs from "../Pages/ContactUs/ContactUs";
 import AboutUs from "../Pages/AboutUs/AboutUs";
 import OurMenu from "../Pages/OurMenu/OurMenu";
 import Profile from "../Pages/Profile/Profile";
+import ManageUsers from "../Pages/Dashboard/AdminDashboard/ManageUsers";
 
 const router=createBrowserRouter([
     {
@@ -68,6 +69,10 @@ const router=createBrowserRouter([
             {
                 path:'food-dish-add',
                 Component:FoodDishAdd
+            },
+            {
+                path:'mange-user',
+                Component:ManageUsers
             }
         ]
     }

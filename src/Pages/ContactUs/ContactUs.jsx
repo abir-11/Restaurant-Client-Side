@@ -1,29 +1,67 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import Swal from 'sweetalert2';
-import { MapPin, Phone, Mail, Clock, Send, MessageSquare } from 'lucide-react';
+import { MapPin, Phone, Mail, Store, User, ChefHat, Send } from 'lucide-react';
+import useAxiosSecure from '../../Hooks/useAxiosSecure';
+import useAuth from '../../Hooks/useAuth';
 
 const ContactUs = () => {
+    const { user,loading } = useAuth();
+    const axiosSecure = useAxiosSecure();
+
     const {
         register,
         handleSubmit,
         reset,
-        formState: { errors, isSubmitting },
+        setValue,
+        formState: { errors },
     } = useForm();
 
-    const onSubmit = async (data) => {
-        // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 1000));
 
-        console.log(data);
-        reset();
-        Swal.fire({
-            title: 'Message Sent!',
-            text: 'Thank you for reaching out. We will get back to you shortly.',
-            icon: 'success',
-            confirmButtonColor: '#ec4899', // Pink-500
-        });
+
+    // ২. ফর্মের ডিফল্ট ভ্যালু সেট করা (নাম এবং ইমেইল)
+    useEffect(() => {
+        if (user) {
+            setValue('name', user?.displayName || '');
+            setValue('email', user?.email || '');
+        }
+    }, [user, setValue]);
+
+
+    // ৪. ফর্ম সাবমিট হ্যান্ডলার
+    const onSubmit = async (data) => {
+        try {
+            const applicationData = {
+                owner_name: data.name,
+                email: data.email,
+                phone: data.phone,
+                restaurant_name: data.restaurantName,
+                location: data.location,
+                message: data.message,
+                status: 'pending',
+                applied_date: new Date().toISOString()
+            };
+
+            await axiosSecure.post('/restaurantApplications', applicationData);
+
+            Swal.fire({
+                title: 'Success',
+                text: 'Application submitted successfully!',
+                icon: 'success',
+                confirmButtonColor: '#3085d6',
+            });
+
+            reset();
+        } catch (error) {
+            Swal.fire({
+                title: 'Submission Failed',
+                text: error.response?.data?.message || error.message || 'Something went wrong.',
+                icon: 'error',
+                confirmButtonColor: '#d33',
+            });
+        }
     };
+
 
     return (
         <div className="min-h-screen bg-white font-sans text-gray-800">
@@ -32,17 +70,17 @@ const ContactUs = () => {
             <div className="relative bg-gray-900 text-white py-20 md:py-28">
                 <div className="absolute inset-0 overflow-hidden">
                     <img
-                        src="https://i.ibb.co.com/LX4h8zDs/p1.webp"
-                        alt="Office"
+                        src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=2070&auto=format&fit=crop"
+                        alt="Restaurant Background"
                         className="w-full h-full object-cover opacity-30"
                     />
                 </div>
                 <div className="relative max-w-6xl mx-auto px-4 text-center">
                     <h1 className="text-4xl md:text-6xl font-bold mb-4">
-                        Get in <span className="text-pink-500">Touch</span>
+                        Become a <span className="text-pink-500">Partner</span>
                     </h1>
                     <p className="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto">
-                        Have questions about BookerIt? We're here to help you optimize your restaurant management.
+                        Own a restaurant? Join BookerIt to streamline reservations, manage tables, and grow your business.
                     </p>
                 </div>
             </div>
@@ -51,154 +89,120 @@ const ContactUs = () => {
             <div className="max-w-6xl mx-auto px-4 py-16">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
 
-                    {/* Left Column: Contact Info & Map */}
+                    {/* Left Column: Information */}
                     <div className="space-y-10">
                         <div>
-                            <h2 className="text-3xl font-bold mb-6">Contact Information</h2>
+                            <h2 className="text-3xl font-bold mb-6">Why Partner with Us?</h2>
                             <p className="text-gray-600 mb-8 leading-relaxed">
-                                Whether you're a restaurant owner looking to integrate our system or a diner with a booking query, our team is ready to assist you.
+                                Join hundreds of top-tier restaurants using our platform. We provide comprehensive dashboards for owners.
                             </p>
-
                             <div className="space-y-6">
-                                {/* Address */}
-                                <ContactCard
-                                    icon={<MapPin className="w-6 h-6" />}
-                                    title="Visit Us"
-                                    content="House 12, Road 5, Block C, Banani, Dhaka 1213, Bangladesh"
-                                />
-
-                                <ContactCard
-                                    icon={<Phone className="w-6 h-6" />}
-                                    title="Call Us"
-                                    content={
-                                        <a
-                                            href="tel:+8801306979918"
-                                            className="hover:underline"
-                                        >
-                                            +880 1306 979918
-                                        </a>
-                                    }
-                                />
-
-
-                                {/* Email */}
-                                <ContactCard
-                                    icon={<Mail className="w-6 h-6" />}
-                                    title="Email Us"
-                                    content={
-                                        <a
-                                            href="mailto:malam2331103@bscse.uiu.ac.bd"
-                                            className="hover:underline"
-                                        >
-                                            malam2331103@bscse.uiu.ac.bd
-                                        </a>
-                                    }
-                                />
-
-                                {/* Hours */}
-                                <ContactCard
-                                    icon={<Clock className="w-6 h-6" />}
-                                    title="Business Hours"
-                                    content={
-                                        <div>
-                                            <p>Mon - Fri: 9:00 AM - 11:00 PM</p>
-                                            <p>Sat - Sun: 2:00 PM - 11:00 PM</p>
-                                        </div>
-                                    }
-                                />
+                                <ContactCard icon={<Store className="w-6 h-6" />} title="Business Expansion" content="Reach more customers digitally." />
+                                <ContactCard icon={<Phone className="w-6 h-6" />} title="Support Hotline" content={<a href="tel:+8801306979918" className="hover:underline">+880 1306 979918</a>} />
+                                <ContactCard icon={<Mail className="w-6 h-6" />} title="Email Us" content={<a href='tomail:malam2331103@bscse.uiu.ac.bd'>malam2331103@bscse.uiu.ac.bd</a>} />
+                                <ContactCard icon={<MapPin className="w-6 h-6" />} title="Office" content="Banani, Dhaka 1213" />
                             </div>
                         </div>
-
-                        {/* Embedded Map */}
-                        <div className="rounded-2xl overflow-hidden shadow-lg h-64 border border-gray-200">
-                            <iframe
-                                src="https://www.google.com/maps?q=House+12,+Road+5,+Block+C,+Banani,+Dhaka+1213,+Bangladesh&output=embed"
-                                width="100%"
-                                height="100%"
-                                style={{ border: 0 }}
-                                allowFullScreen=""
-                                loading="lazy"
-                                referrerPolicy="no-referrer-when-downgrade"
-                                title="Banani Office Location"
-                            ></iframe>
-                        </div>
-
                     </div>
 
-                    {/* Right Column: Contact Form */}
+                    {/* Right Column: Form */}
                     <div className="bg-pink-50/50 p-8 md:p-10 rounded-3xl shadow-lg border border-pink-100">
                         <h3 className="text-2xl font-bold mb-6 flex items-center gap-2">
-                            <MessageSquare className="text-pink-500" />
-                            Send a Message
+                            <ChefHat className="text-pink-500" />
+                            Register Your Restaurant
                         </h3>
 
-                        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
 
-                            {/* Name Input */}
+                            {/* Owner Name (Read Only) */}
                             <div>
-                                <label className="block text-sm font-semibold text-gray-700 mb-2">Full Name</label>
+                                <label className="block text-sm font-semibold text-gray-700 mb-2">Owner's Full Name</label>
+                                <div className="relative">
+                                    <User className="absolute left-4 top-3.5 w-5 h-5 text-gray-400" />
+                                    <input
+                                        {...register("name", { required: "Owner Name is required" })}
+                                        type="text"
+                                        placeholder="John Doe"
+                                        readOnly // Name usually comes from Auth profile
+                                        className="w-full pl-12 pr-5 py-3 rounded-xl border border-gray-200 bg-base-100 cursor-not-allowed focus:outline-none"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Restaurant Name */}
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-700 mb-2">Restaurant Name</label>
+                                <div className="relative">
+                                    <Store className="absolute left-4 top-3.5 w-5 h-5 text-gray-400" />
+                                    <input
+                                        {...register("restaurantName", { required: "Restaurant Name is required" })}
+                                        type="text"
+                                        placeholder="e.g. The Spicy Crab"
+                                        className="w-full pl-12 pr-5 py-3 rounded-xl border border-gray-200 focus:border-pink-500 focus:ring-2 focus:ring-pink-200 outline-none transition-all bg-white"
+                                    />
+                                </div>
+                                {errors.restaurantName && <span className="text-red-500 text-sm mt-1">{errors.restaurantName.message}</span>}
+                            </div>
+
+                            {/* Email & Phone */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <div>
+                                    <label className="block text-sm font-semibold text-gray-700 mb-2">Business Email</label>
+                                    <input
+                                        {...register("email", { required: "Email is required" })}
+                                        type="email"
+                                        readOnly
+                                        className="w-full px-5 py-3 rounded-xl border border-gray-200 bg-base-100 cursor-not-allowed focus:outline-none"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-semibold text-gray-700 mb-2">Phone Number</label>
+                                    <input
+                                        {...register("phone", { required: "Phone is required" })}
+                                        type="tel"
+                                        placeholder="+880 1XXX..."
+                                        className="w-full px-5 py-3 rounded-xl border border-gray-200 focus:border-pink-500 focus:ring-2 focus:ring-pink-200 outline-none transition-all bg-white"
+                                    />
+                                    {errors.phone && <span className="text-red-500 text-sm mt-1">{errors.phone.message}</span>}
+                                </div>
+                            </div>
+
+                            {/* Location */}
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-700 mb-2">Restaurant Address</label>
                                 <input
-                                    {...register("name", { required: "Name is required" })}
+                                    {...register("location", { required: "Location is required" })}
                                     type="text"
-                                    placeholder="Enter your full name"
+                                    placeholder="Full address of your restaurant"
                                     className="w-full px-5 py-3 rounded-xl border border-gray-200 focus:border-pink-500 focus:ring-2 focus:ring-pink-200 outline-none transition-all bg-white"
                                 />
-                                {errors.name && <span className="text-red-500 text-sm mt-1">{errors.name.message}</span>}
+                                {errors.location && <span className="text-red-500 text-sm mt-1">{errors.location.message}</span>}
                             </div>
 
-                            {/* Email Input */}
+                            {/* Message */}
                             <div>
-                                <label className="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
-                                <input
-                                    {...register("email", {
-                                        required: "Email is required",
-                                        pattern: {
-                                            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                                            message: "Invalid email address"
-                                        }
-                                    })}
-                                    type="email"
-                                    placeholder="name@example.com"
-                                    className="w-full px-5 py-3 rounded-xl border border-gray-200 focus:border-pink-500 focus:ring-2 focus:ring-pink-200 outline-none transition-all bg-white"
-                                />
-                                {errors.email && <span className="text-red-500 text-sm mt-1">{errors.email.message}</span>}
-                            </div>
-
-                            {/* Subject Input */}
-                            <div>
-                                <label className="block text-sm font-semibold text-gray-700 mb-2">Subject</label>
-                                <input
-                                    {...register("subject", { required: "Subject is required" })}
-                                    type="text"
-                                    placeholder="How can we help?"
-                                    className="w-full px-5 py-3 rounded-xl border border-gray-200 focus:border-pink-500 focus:ring-2 focus:ring-pink-200 outline-none transition-all bg-white"
-                                />
-                                {errors.subject && <span className="text-red-500 text-sm mt-1">{errors.subject.message}</span>}
-                            </div>
-
-                            {/* Message Input */}
-                            <div>
-                                <label className="block text-sm font-semibold text-gray-700 mb-2">Message</label>
+                                <label className="block text-sm font-semibold text-gray-700 mb-2">Additional Information</label>
                                 <textarea
-                                    {...register("message", { required: "Message is required" })}
-                                    rows="5"
-                                    placeholder="Write your message here..."
+                                    {...register("message")}
+                                    rows="4"
+                                    placeholder="Tell us about your restaurant..."
                                     className="w-full px-5 py-3 rounded-xl border border-gray-200 focus:border-pink-500 focus:ring-2 focus:ring-pink-200 outline-none transition-all bg-white resize-none"
                                 ></textarea>
-                                {errors.message && <span className="text-red-500 text-sm mt-1">{errors.message.message}</span>}
                             </div>
 
                             {/* Submit Button */}
                             <button
                                 type="submit"
-                                disabled={isSubmitting}
-                                className="w-full bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-600 hover:to-rose-700 cursor-pointer text-white font-bold py-4 rounded-xl shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2"
+                                disabled={loading}
+                                className="w-full bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-600 hover:to-rose-700 cursor-pointer text-white font-bold py-4 rounded-xl shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                             >
-                                {isSubmitting ? (
-                                    <span>Sending...</span>
+                                {loading ? (
+                                    <span className="flex items-center gap-2">
+                                        Processing... <span className="loading loading-spinner loading-xs"></span>
+                                    </span>
                                 ) : (
                                     <>
-                                        Send Message <Send className="w-5 h-5" />
+                                        Submit Application <Send className="w-5 h-5" />
                                     </>
                                 )}
                             </button>
@@ -211,7 +215,6 @@ const ContactUs = () => {
     );
 };
 
-// Sub-component for Contact Cards
 const ContactCard = ({ icon, title, content }) => (
     <div className="flex items-start gap-4">
         <div className="w-12 h-12 rounded-full bg-pink-100 flex items-center justify-center text-pink-500 flex-shrink-0">

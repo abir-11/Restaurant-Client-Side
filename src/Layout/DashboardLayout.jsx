@@ -1,63 +1,180 @@
-
 import React from 'react';
-import { BiSolidMessageSquareAdd } from 'react-icons/bi';
+import { NavLink, Outlet, useNavigate } from "react-router"; // FIXED: Use react-router-dom
+import { useQuery } from '@tanstack/react-query';
+import { 
+    FaUsers, 
+    FaHome, 
+    FaUtensils, 
+    FaSignOutAlt,
+    FaBars 
+} from 'react-icons/fa';
 import { PiBowlFoodFill } from 'react-icons/pi';
-import { NavLink, Outlet } from "react-router";
+import { IoFastFoodSharp } from 'react-icons/io5';
+import { BiSolidDashboard } from "react-icons/bi";
+import Swal from 'sweetalert2';
 
+import useAxiosSecure from '../Hooks/useAxiosSecure';
+import useAuth from '../Hooks/useAuth';
 
 const DashboardLayout = () => {
+    const { user, logOut } = useAuth();
+    const axiosSecure = useAxiosSecure();
+    const navigate = useNavigate();
+
+    // 1. Fetch User Data
+    const { data: dbUser = {}, isLoading } = useQuery({
+        queryKey: ['user', user?.email],
+        enabled: !!user?.email,
+        queryFn: async () => {
+            const res = await axiosSecure.get(`/users/${user?.email}`);
+            return res.data;
+        }
+    });
+
+    const handleLogout = () => {
+        logOut().then(() => {
+            navigate('/');
+            Swal.fire({
+                icon: 'success',
+                title: 'Logged Out',
+                showConfirmButton: false,
+                timer: 1500
+            });
+        });
+    };
+
+    if (isLoading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <span className="loading loading-spinner loading-lg text-pink-500"></span>
+            </div>
+        );
+    }
+
+    const navLinkClasses = ({ isActive }) => 
+        `flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 font-medium ${
+            isActive 
+            ? 'bg-pink-500 text-white shadow-md' 
+            : 'text-gray-700 hover:bg-pink-100 hover:text-pink-600'
+        }`;
+
     return (
-        <div>
-            <div className="drawer  lg:drawer-open">
-                <input id="my-drawer-4" type="checkbox" className="drawer-toggle" />
-                <div className="drawer-content">
-                    {/* Navbar */}
-                    <nav className="navbar w-full bg-pink-200">
-                        <label htmlFor="my-drawer-4" aria-label="open sidebar" className="btn btn-square btn-ghost">
-                            {/* Sidebar toggle icon */}
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" strokeLinejoin="round" strokeLinecap="round" strokeWidth="2" fill="none" stroke="currentColor" className="my-1.5 text-pink-500  inline-block size-4"><path d="M4 4m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z"></path><path d="M9 4v16"></path><path d="M14 10l2 2l-2 2"></path></svg>
+        <div className="drawer lg:drawer-open">
+            <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
+            
+            {/* --- Main Content Area --- */}
+            <div className="drawer-content flex flex-col bg-gray-50 min-h-screen">
+                
+                {/* Mobile Navbar (Only shows on small screens) */}
+                <div className="w-full navbar bg-white shadow-sm lg:hidden sticky top-0 z-50">
+                    <div className="flex-none">
+                        <label htmlFor="my-drawer-2" className="btn btn-square btn-ghost text-pink-500">
+                            <FaBars className="w-6 h-6" />
                         </label>
-                        <div className="px-4">Navbar Title</div>
-                    </nav>
-                    {/* Page content here */}
-                    <div >
-                        <div ><Outlet></Outlet></div>
+                    </div>
+                    <div className="flex-1 px-2 mx-2 font-bold text-lg text-gray-800">
+                        BookerIt Dashboard
                     </div>
                 </div>
 
-                <div className="drawer-side  is-drawer-close:overflow-visible">
-                    <label htmlFor="my-drawer-4" aria-label="close sidebar" className="drawer-overlay "></label>
-                    <div className="flex min-h-full flex-col items-start bg-pink-200 is-drawer-close:w-14 is-drawer-open:w-64">
-                        {/* Sidebar content here */}
-                        <ul className="menu w-full grow">
-                            {/* List item */}
-                            <li>
-                                <NavLink to='/' className="is-drawer-close:tooltip hover:text-pink-400 is-drawer-close:tooltip-right pb-5  border-b-2" data-tip="Homepage">
-                                    {/* Home icon */}
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" strokeLinejoin="round" strokeLinecap="round" strokeWidth="2" fill="none" stroke="currentColor" className="my-1.5 inline-block size-4"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"></path><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
-                                    <span className="is-drawer-close:hidden">Homepage</span>
-                                </NavLink>
-                            </li>
-                            {/* Food Dish Add */}
-                            <li>
-                                <NavLink to='/dashboard/food-dish-add' className={({ isActive }) => `font-base mt-3 px-3 py-1 rounded-xl hover:underline ${isActive ? 'bg-pink-500 rounded-full text-white font-semibold' : ' hover:text-pink-400'}`}>
-                                    <PiBowlFoodFill />
-                                    <span className="is-drawer-close:hidden">Food Dish Add</span>
-                                </NavLink>
+                {/* Dashboard Content (Outlet) */}
+                <div className="p-8">
+                    <Outlet />
+                </div>
+            </div> 
 
-                            </li>
+            {/* --- Sidebar Area (Navigation) --- */}
+            <div className="drawer-side z-50">
+                <label htmlFor="my-drawer-2" aria-label="close sidebar" className="drawer-overlay"></label> 
+                
+                <div className="menu p-4 w-72 min-h-full bg-white text-base-content border-r border-gray-200 flex flex-col justify-between">
                     
+                    <div>
+                        {/* Sidebar Header */}
+                        <div className="mb-8 px-2 flex items-center gap-2 text-2xl font-bold text-gray-800">
+                            <BiSolidDashboard className="text-pink-500" />
+                            <span>Dashboard</span>
+                        </div>
 
-                            {/* List item */}
+                       
+
+                        {/* User Profile */}
+                        <div className="mb-8 p-4 bg-pink-50 rounded-2xl flex items-center gap-3">
+                            <div className="avatar">
+                                <div className="w-10 rounded-full ring ring-pink-500 ring-offset-base-100 ring-offset-2">
+                                    <img src={user?.photoURL || "https://i.ibb.co/T0x4D7z/user.png"} alt="user" />
+                                </div>
+                            </div>
+                            <div className="overflow-hidden">
+                                <h3 className="font-bold text-sm truncate">{dbUser?.name || user?.displayName || 'User'}</h3>
+                                <p className="text-xs text-gray-500 uppercase tracking-wide">{dbUser?.role || 'Guest'}</p>
+                            </div>
+                        </div>
+
+                        {/* Navigation Links */}
+                        <ul className="space-y-2">
+
+                             {/* SHARED LINKS */}
                             <li>
-                                <button className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Settings">
-                                    {/* Settings icon */}
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" strokeLinejoin="round" strokeLinecap="round" strokeWidth="2" fill="none" stroke="currentColor" className="my-1.5 inline-block size-4"><path d="M20 7h-9"></path><path d="M14 17H5"></path><circle cx="17" cy="17" r="3"></circle><circle cx="7" cy="7" r="3"></circle></svg>
-                                    <span className="is-drawer-close:hidden">Settings</span>
-                                </button>
+                                <NavLink to='/' className={navLinkClasses}>
+                                    <FaHome className="w-5 h-5" />
+                                    Home Page
+                                </NavLink>
                             </li>
+                            
+                            {/* ADMIN LINKS */}
+                            {dbUser?.role === 'admin' && (
+                                <>
+                                    <li>
+                                        <NavLink to='/dashboard/mange-user' className={navLinkClasses}>
+                                            <FaUsers className="w-5 h-5" />
+                                            Manage Users
+                                        </NavLink>
+                                    </li>
+                                    <li>
+                                        <NavLink to='/dashboard/all-food' className={navLinkClasses}>
+                                            <IoFastFoodSharp className="w-5 h-5" />
+                                            All Food Items
+                                        </NavLink>
+                                    </li>
+                                </>
+                            )}
+
+                            {/* RESTAURANT OWNER LINKS */}
+                            {dbUser?.role === 'restaurant-owner' && (
+                                <>
+                                    <li>
+                                        <NavLink to='/dashboard/food-dish-add' className={navLinkClasses}>
+                                            <PiBowlFoodFill className="w-5 h-5" />
+                                            Add Food Dish
+                                        </NavLink>
+                                    </li>
+                                    <li>
+                                        <NavLink to='/dashboard/my-items' className={navLinkClasses}>
+                                            <FaUtensils className="w-5 h-5" />
+                                            My Menu Items
+                                        </NavLink>
+                                    </li>
+                                </>
+                            )}
+
+                            <div className="divider my-4"></div>
+
+                            
                         </ul>
                     </div>
+
+                    {/* Logout Button */}
+                    <div className="mt-4">
+                        <button 
+                            onClick={handleLogout}
+                            className="flex w-full items-center gap-3 px-4 py-3 rounded-xl text-red-500 hover:bg-red-50 hover:text-red-600 transition-all font-medium"
+                        >
+                            <FaSignOutAlt className="w-5 h-5" />
+                            Logout
+                        </button>
+                    </div>
+
                 </div>
             </div>
         </div>
