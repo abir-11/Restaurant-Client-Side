@@ -126,26 +126,8 @@ const ManageUsers = () => {
                                         </div>
                                     </td>
                                     <td className="text-gray-500">{user.email}</td>
-                                    <td>
-                                        <div className="relative inline-block w-48">
-                                            <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
-                                                {user.role === 'admin' && <Shield className="w-4 h-4 text-purple-600" />}
-                                                {user.role === 'restaurant-owner' && <ChefHat className="w-4 h-4 text-orange-600" />}
-                                                {(!user.role || user.role === 'user') && <Users className="w-4 h-4" />}
-                                            </div>
-                                            <select
-                                                defaultValue={user.role || 'user'}
-                                                onChange={(e) => handleRoleChange(e, user._id)}
-                                                className={`select select-bordered select-sm w-full pl-9 focus:outline-none focus:border-pink-500 
-                                                    ${user.role === 'admin' ? 'bg-purple-50 border-purple-200 text-purple-700' : ''}
-                                                    ${user.role === 'restaurant-owner' ? 'bg-orange-50 border-orange-200 text-orange-700' : ''}
-                                                `}
-                                            >
-                                                <option value="user">User</option>
-                                                <option value="restaurant-owner">Restaurant Owner</option>
-                                                <option value="admin">Admin</option>
-                                            </select>
-                                        </div>
+                                    <td className="text-gray-500">
+                                       {user.role}
                                     </td>
                                     <td className="text-center">
                                         <button

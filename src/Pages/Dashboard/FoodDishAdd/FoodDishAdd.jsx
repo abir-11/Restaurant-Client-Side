@@ -4,13 +4,22 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import useAxiosSecure from '../../../Hooks/useAxiosSecure';
 import useAuth from '../../../Hooks/useAuth';
+import { useQuery } from '@tanstack/react-query';
 
 
 const FoodDishAdd = () => {
     const { register, handleSubmit, reset, formState: { errors } } = useForm();
-    const { loading } = useAuth();
+    const { user, loading } = useAuth();
     const axiosSecure = useAxiosSecure();
 
+    const { data: restaurantOwner = {} } = useQuery({
+        queryKey: ['restaurantApplications'],
+        queryFn: async () => {
+            const res = await axiosSecure.get(`/restaurantApplications/${user.email}`)
+            return res.data;
+        }
+    })
+    console.log(restaurantOwner)
     const onSubmit = async (data) => {
 
         try {
@@ -26,7 +35,7 @@ const FoodDishAdd = () => {
                 uploadedImgUrl = res.data?.data?.url;
             }
 
-            
+
             const newDish = {
                 title: data.name,
                 image: uploadedImgUrl,
@@ -39,6 +48,11 @@ const FoodDishAdd = () => {
                 calories: parseInt(data.calories),
                 availability: data.availability === 'true',
                 featured: data.featured === 'true',
+                owner_name:restaurantOwner.owner_name,
+                email:user.email,
+                location:restaurantOwner.location,
+                restaurant_name:restaurantOwner.restaurant_name,
+                phone:restaurantOwner.phone,
                 createdAt: new Date()
             };
 
@@ -243,7 +257,7 @@ const FoodDishAdd = () => {
                                         <span>None</span>
                                     </label>
                                 </div>
-                               { errors.vegType && <p className='text-red-500 text-sm mt-1'>* Veg Type is required</p> }
+                                {errors.vegType && <p className='text-red-500 text-sm mt-1'>* Veg Type is required</p>}
 
                             </div>
 

@@ -1,4 +1,4 @@
-import { Link, NavLink } from "react-router";
+import { Link, NavLink, useNavigate } from "react-router";
 import useAuth from "../../Hooks/useAuth";
 import BookerAI from "../../assets/ChatGPT Image Dec 2, 2025, 12_28_43 AM 1.png";
 import useAxiosSecure from "../../Hooks/useAxiosSecure";
@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 const Navbar = () => {
   const { user, logOut, loading } = useAuth();
   const axiosSecure = useAxiosSecure();
+  const navigate=useNavigate();
   const { data: users = {} } = useQuery({
     queryKey: ['users', user?.email],
     enabled: !!user?.email,
@@ -16,6 +17,7 @@ const Navbar = () => {
   });
   const handleLogout = () => {
     logOut().catch(console.error);
+    navigate('/')
   };
 
   const navLinks = (
@@ -30,11 +32,7 @@ const Navbar = () => {
           ? "bg-pink-500 rounded-full font-semibold"
           : "text-white hover:text-pink-400"
       }>Our Menu</NavLink></li>
-      <li><NavLink to="/restaurant" className={({ isActive }) =>
-        isActive
-          ? "bg-pink-500 rounded-full font-semibold"
-          : "text-white hover:text-pink-400"
-      }>Restaurant</NavLink></li>
+      
 
       <li><NavLink to="/contact" className={({ isActive }) =>
         isActive
@@ -90,9 +88,10 @@ const Navbar = () => {
 
         {user ? (
           <div className="gap-2 flex items-center">
+            {users.role==='user'&&
             <NavLink to="/book-table" className="btn btn-sm  bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-600 hover:to-rose-700 border-none text-white">
               Book Now
-            </NavLink>
+            </NavLink>}
 
             <div className="dropdown dropdown-end">
               <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
@@ -116,7 +115,7 @@ const Navbar = () => {
                   users?.role === 'admin' || users?.role==='restaurant-owner' ? (
                     <li>
                       <NavLink
-                        to="/dashboard"
+                        to={users?.role==='admin'?'/dashboard/admin-dashboard':'/dashboard/restaurantDashboard'}
                         className={({ isActive }) =>
                           `rounded-full px-2 py-2 text-white font-semibold
       hover:bg-pink-500 ${isActive ? "bg-pink-600" : ""}`
