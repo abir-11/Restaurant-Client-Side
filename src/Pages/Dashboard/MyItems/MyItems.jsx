@@ -17,11 +17,11 @@ const MyItems = () => {
         queryKey: ['my-food-items', user?.email],
         enabled: !loading && !!user?.email, // ইউজার লোড হওয়ার পরেই কল হবে
         queryFn: async () => {
-            const res = await axiosSecure.get(`/foodDishes/${user?.email}`);
+            const res = await axiosSecure.get(`/foodDishes/user/${user?.email}`);
             return res.data;
         }
     });
-  console.log(items)
+    console.log(items)
     // 2. Open Modal
     const openEditModal = (item) => {
         setSelectedItem(item);
@@ -32,21 +32,21 @@ const MyItems = () => {
     const handleUpdate = async (e) => {
         e.preventDefault();
         const form = e.target;
-        
+
         const updatedItem = {
             title: form.title.value,
             category: form.category.value,
             price: parseFloat(form.price.value),
             image: form.image.value,
             // ইমেইল চেঞ্জ করা যাবে না, তাই আগেরটাই থাকবে
-            email: selectedItem.email 
+            email: selectedItem.email
         };
 
         try {
             const res = await axiosSecure.patch(`/foodDishes/${selectedItem._id}`, updatedItem);
-            
+
             if (res.data.modifiedCount > 0) {
-                refetch(); 
+                refetch();
                 setIsModalOpen(false);
                 Swal.fire({
                     position: "top-end",
@@ -138,39 +138,38 @@ const MyItems = () => {
 
             {/* Modal Part kept same as yours but clean */}
             {isModalOpen && selectedItem && (
-               <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-                   <div className="bg-white rounded-lg p-6 w-full max-w-lg relative">
-                       <button onClick={() => setIsModalOpen(false)} className="absolute top-2 right-2 btn btn-sm btn-circle btn-ghost"><FaTimes/></button>
-                       <h3 className="text-2xl font-bold text-center mb-4">Update Item</h3>
-                       <form onSubmit={handleUpdate}>
-                           <div className="form-control mb-3">
-                               <label className="label">Name</label>
-                               <input type="text" name="title" defaultValue={selectedItem.title} className="input input-bordered" required />
-                           </div>
-                           <div className="flex gap-2 mb-3">
-                               <div className="form-control w-1/2">
-                                   <label className="label">Category</label>
-                                   <select name="category" defaultValue={selectedItem.category} className="select select-bordered">
-                                       <option value="salad">Salad</option>
-                                       <option value="pizza">Pizza</option>
-                                       <option value="soup">Soup</option>
-                                       <option value="dessert">Dessert</option>
-                                       <option value="drinks">Drinks</option>
-                                   </select>
-                               </div>
-                               <div className="form-control w-1/2">
-                                   <label className="label">Price</label>
-                                   <input type="number" step="any" name="price" defaultValue={selectedItem.price} className="input input-bordered" required />
-                               </div>
-                           </div>
-                           <div className="form-control mb-4">
-                               <label className="label">Image URL</label>
-                               <input type="text" name="image" defaultValue={selectedItem.image} className="input input-bordered" required />
-                           </div>
-                           <button className="btn bg-orange-500 hover:bg-orange-600 text-white w-full">Update</button>
-                       </form>
-                   </div>
-               </div>
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-transparent  bg-opacity-50">
+                    <div className="bg-white rounded-lg p-6 shadow-2xl w-full max-w-lg mx-auto relative">
+                        <button onClick={() => setIsModalOpen(false)} className="absolute top-2 right-2 btn btn-sm btn-circle btn-ghost"><FaTimes /></button>
+                        <h3 className="text-2xl font-bold text-center mb-4">Update Item</h3>
+                        <form onSubmit={handleUpdate}>
+                            <div className="form-control mb-3">
+                                <label className="label">Name</label>
+                                <input type="text" name="title" defaultValue={selectedItem.title} className="input input-bordered" required />
+                            </div>
+                            <div className="flex gap-2 mb-3">
+                                <div className="form-control w-1/2">
+                                    <label className="label">Category</label>
+                                    <select name="category" defaultValue={selectedItem.category} className="select select-bordered">
+                                        <option value="Dessert">Dessert</option>
+                                        <option value="Bakery">Bakery</option>
+                                        <option value="Fast Food">Fast Food</option>
+                                        <option value="Drinks">Drinks</option>
+                                    </select>
+                                </div>
+                                <div className="form-control w-1/2">
+                                    <label className="label">Price</label>
+                                    <input type="number" step="any" name="price" defaultValue={selectedItem.price} className="input input-bordered" required />
+                                </div>
+                            </div>
+                            <div className="form-control mb-4">
+                                <label className="label">Image URL</label>
+                                <input type="text" name="image" defaultValue={selectedItem.image} className="input input-bordered" required />
+                            </div>
+                            <button className="btn bg-orange-500 hover:bg-orange-600 text-white w-full">Update</button>
+                        </form>
+                    </div>
+                </div>
             )}
         </div>
     );

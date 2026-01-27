@@ -30,7 +30,7 @@ const MembershipRequest = () => {
     // 3. Mutation to Update User Role
     const updateRoleMutation = useMutation({
         mutationFn: async ({ email, role }) => {
-            const res = await axiosSecure.patch(`/users/role/${email}`, { role });
+            const res = await axiosSecure.patch(`/users/${email}`, { role });
             return res.data;
         },
         onSuccess: () => {

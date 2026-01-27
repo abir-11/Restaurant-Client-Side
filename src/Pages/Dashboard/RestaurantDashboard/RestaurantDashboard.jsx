@@ -18,7 +18,7 @@ const RestaurantDashboard = () => {
     const { data: foodItems = [], isLoading } = useQuery({
         queryKey: ['foodDishes'],
         queryFn: async () => {
-            const res = await axiosSecure.get(`/foodDishes/${user?.email}`);
+            const res = await axiosSecure.get(`/foodDishes/user/${user?.email}`);
             return res.data;
         }
     });
