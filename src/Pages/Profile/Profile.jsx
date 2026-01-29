@@ -39,33 +39,37 @@ const Profile = () => {
 
     // 3. Cancel booking function
     const handleCancelBooking = async (bookingId) => {
-        Swal.fire({
-            title: 'Cancel Booking?',
-            text: "Are you sure you want to cancel this booking?",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Yes, cancel it!',
-            cancelButtonText: 'No, keep it'
-        }).then(async (result) => {
-            if (result.isConfirmed) {
-                try {
-                    const res = await axiosSecure.delete(`/bookTable/${bookingId}`);
-                    if (res.data.deletedCount > 0) {
-                        refetch();
-                        Swal.fire(
-                            'Cancelled!',
-                            'Your booking has been cancelled.',
-                            'success'
-                        );
-                    }
-                } catch (error) {
-                    Swal.fire('Error!', 'Failed to cancel booking.', 'error');
-                }
-            }
+  Swal.fire({
+    title: 'Cancel Booking?',
+    text: 'Are you sure you want to cancel this booking?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6',
+    confirmButtonText: 'Yes, cancel it!',
+    cancelButtonText: 'No, keep it'
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      try {
+        const res = await axiosSecure.patch(`/bookTable/${bookingId}`, {
+          status: 'cancelled'
         });
-    };
+
+        if (res.data.modifiedCount > 0) {
+          refetch();
+          Swal.fire(
+            'Cancelled!',
+            'Your booking has been cancelled.',
+            'success'
+          );
+        }
+      } catch (error) {
+        Swal.fire('Error!', 'Failed to cancel booking.', 'error');
+      }
+    }
+  });
+};
+
 
     // Format date helper
     const formatDate = (dateString) => {

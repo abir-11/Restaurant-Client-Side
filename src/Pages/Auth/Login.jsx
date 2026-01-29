@@ -8,6 +8,7 @@ import useAuth from '../../Hooks/useAuth';
 import useAxiosSecure from '../../Hooks/useAxiosSecure';
 import bgCover from '../../assets/photo-1517248135467-4c7edcad34c4.jpg' ;
 import BookerAI from "../../assets/ChatGPT Image Dec 2, 2025, 12_28_43 AM 1.png";
+import Swal from 'sweetalert2';
 
 
 const Login = () => {
@@ -16,6 +17,7 @@ const Login = () => {
   const { signInUser, signInGoogle, setUser,user } = useAuth();
   const navigate = useNavigate();
   const axiosSecure = useAxiosSecure();
+
   // React Hook Form
   const {
     register,
@@ -33,7 +35,11 @@ const Login = () => {
         navigate(location?.state || '/')
       })
       .catch(error => {
-        console.log(error)
+          Swal.fire({
+    icon: 'error',
+    title: 'Login Failed',
+    text: 'Invalid email or password'
+  });
       })
   };
   const handleGoogleSubmit = () => {

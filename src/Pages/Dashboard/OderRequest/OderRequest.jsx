@@ -20,6 +20,7 @@ const OrderRequest = () => {
         },
         enabled: !!user?.email,
     });
+    console.log(orders);
 
     // ২. রিজেক্ট বা ডিলিট ফাংশন
     const handleReject = (id) => {
@@ -49,6 +50,34 @@ const OrderRequest = () => {
             }
         });
     };
+
+    const handleConfirm = async (id) => {
+        const result = await Swal.fire({
+            title: 'Confirm this order?',
+            text: 'This booking will be confirmed',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#16a34a',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: 'Yes, Confirm'
+        });
+
+        if (result.isConfirmed) {
+            try {
+                const res = await axiosSecure.patch(`/bookTable/${id}`, {
+                    status: 'confirmed'
+                });
+
+                if (res.data.modifiedCount > 0) {
+                    refetch();
+                    Swal.fire('Confirmed!', 'Order has been confirmed.', 'success');
+                }
+            } catch (error) {
+                Swal.fire('Error!', 'Could not confirm order.', 'error');
+            }
+        }
+    };
+
 
     if (isLoading) return <div className="text-center p-10">Loading Orders...</div>;
 
@@ -83,22 +112,22 @@ const OrderRequest = () => {
                                     {/* Customer Info */}
                                     <td className="px-6 py-4">
                                         <p className="font-bold text-gray-800 flex items-center gap-2">
-                                            <User size={16} className="text-pink-500"/> {order.customerName}
+                                            <User size={16} className="text-pink-500" /> {order.customerName}
                                         </p>
                                         <p className="text-sm text-gray-500 mt-1">{order.customerEmail}</p>
                                         <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">
-                                            <Phone size={14}/> {order.phone}
+                                            <Phone size={14} /> {order.phone}
                                         </p>
                                     </td>
 
                                     {/* Date & Time */}
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-2 text-gray-700 font-medium">
-                                            <Calendar size={16} className="text-blue-500"/>
+                                            <Calendar size={16} className="text-blue-500" />
                                             {order.date}
                                         </div>
                                         <div className="flex items-center gap-2 text-gray-500 text-sm mt-1">
-                                            <Clock size={16} className="text-orange-500"/>
+                                            <Clock size={16} className="text-orange-500" />
                                             {order.timeDisplay || order.time}
                                         </div>
                                         <span className="text-xs text-gray-400 mt-1 block">
@@ -135,31 +164,55 @@ const OrderRequest = () => {
                                     {/* Total Bill */}
                                     <td className="px-6 py-4 text-center">
                                         <p className="text-lg font-bold text-gray-800 flex items-center justify-center gap-1">
-                                            <DollarSign size={16} className="text-green-600"/>
+                                            <DollarSign size={16} className="text-green-600" />
                                             {order.totalEstimatedPrice}
                                         </p>
-                                        <span className={`text-xs px-2 py-0.5 rounded ${order.status === 'pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700'}`}>
+                                        <span className={`text-xs px-2 py-0.5 rounded ${order.status === 'pending' ? 'bg-yellow-100 text-yellow-700' : order.status === 'cancelled' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
                                             {order.status}
                                         </span>
                                     </td>
 
                                     {/* Action (Reject) */}
                                     <td className="px-6 py-4 text-center">
-                                        <button
-                                            onClick={() => handleReject(order._id)}
-                                            className="bg-red-50 hover:bg-red-100 text-red-600 p-2 rounded-lg transition-colors border border-red-200"
-                                            title="Reject Order"
-                                        >
-                                            <Trash2 size={20} />
-                                        </button>
+                                        {order.status === 'pending' ? (
+                                            <div className="flex justify-center gap-2">
+                                                {/* Confirm Button */}
+                                                <button
+                                                    onClick={() => handleConfirm(order._id)}
+                                                    className="bg-green-50 hover:bg-green-100 text-green-600 p-2 rounded-lg border border-green-200"
+                                                    title="Confirm Order"
+                                                >
+                                                    ✔
+                                                </button>
+
+                                                {/* Reject Button */}
+                                                <button
+                                                    onClick={() => handleReject(order._id)}
+                                                    className="bg-red-50 hover:bg-red-100 text-red-600 p-2 rounded-lg border border-red-200"
+                                                    title="Reject Order"
+                                                >
+                                                    <Trash2 size={18} />
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <button
+                                                    onClick={() => handleReject(order._id)}
+                                                    className="bg-red-50 hover:bg-red-100 text-red-600 p-2 rounded-lg border border-red-200"
+                                                    title="Reject Order"
+                                                >
+                                                    <Trash2 size={18} />
+                                                </button>
+                                        )}
                                     </td>
+
+
                                 </tr>
                             ))
                         )}
                     </tbody>
                 </table>
             </div>
-        </div>
+        </div >
     );
 };
 
